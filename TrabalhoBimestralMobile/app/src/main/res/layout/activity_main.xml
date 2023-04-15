@@ -1,18 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="PEDIDO"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_margin="10dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Código do Pedido" />
+
+            <EditText
+                android:id="@+id/edCodPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do Cliente" />
+
+            <EditText
+                android:id="@+id/edNomeCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CPF" />
+
+            <EditText
+                android:id="@+id/edCpfCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btAdcItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="+ Novo Item"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvDescItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decrição do Item"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edDescItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tvQntdItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantidade"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/edQntdItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:inputType="number"/>
+
+            <TextView
+                android:id="@+id/tvVlrUnitItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valor Unitário"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/edVlrUnitItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:inputType="numberDecimal"/>
+
+            <TextView
+                android:id="@+id/tvVlrTotalItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valor Total"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/edVlrTotalItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:inputType="numberDecimal"/>
+
+            <Button
+                android:id="@+id/btIncuirItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Incluir Item"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvItens"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valor Total do Pedido"
+                android:visibility="visible"/>
+
+            <EditText
+                android:id="@+id/edVlrTotalPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:inputType="numberDecimal"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

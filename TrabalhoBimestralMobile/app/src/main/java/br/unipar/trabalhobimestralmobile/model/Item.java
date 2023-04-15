@@ -9,11 +9,10 @@ public class Item {
     public Item() {
     }
 
-    public Item(String descricao, int quantidade, Double vlrUnitario, Double vlrTotal) {
+    public Item(String descricao, int quantidade, Double vlrUnitario) {
         this.descricao = descricao;
         this.quantidade = quantidade;
         this.vlrUnitario = vlrUnitario;
-        this.vlrTotal = vlrTotal;
     }
 
     public String getDescricao() {
@@ -46,5 +45,15 @@ public class Item {
 
     public void setVlrTotal(Double vlrTotal) {
         this.vlrTotal = vlrTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "descricao='" + descricao + '\'' +
+                ", quantidade=" + quantidade +
+                ", vlrUnitario=" + vlrUnitario +
+                ", vlrTotal=" + vlrTotal +
+                '}';
     }
 }

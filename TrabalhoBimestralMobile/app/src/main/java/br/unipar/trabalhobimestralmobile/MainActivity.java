@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+
+
             }
         });
 
@@ -195,6 +197,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculaTotalAPrazo(){
 
+        try {
+
+            if(!nvPedido.getListaItens().isEmpty()) {
+
+                double valorTotalPedido = 0;
+
+                for (int i = 0; i < nvPedido.getListaItens().size(); i++) {
+                    valorTotalPedido = valorTotalPedido + nvPedido.getListaItens().get(i).getVlrTotal();
+                    edVlrTotalPedido.setText(String.valueOf(valorTotalPedido));
+                }
+
+
+
+            } else{
+                Toast.makeText(this, "Não há itens na lista", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }catch (Exception ex){
+            Log.e("ERRO CALCULA TOTAL A PRAZO", ex.getMessage());
+        }
 
     }
 
@@ -216,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }catch (Exception ex){
-            Log.e("ERRO CALCULA TOTAL A PRAZO", ex.getMessage());
+            Log.e("ERRO CALCULA TOTAL A VISTA", ex.getMessage());
         }
 
     }

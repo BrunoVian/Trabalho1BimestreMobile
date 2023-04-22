@@ -180,14 +180,14 @@
                     android:id="@+id/rbAVista"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="A vista (5% desconto)"/>
+                    android:text="A vista (5% desc)"/>
 
                 <RadioButton
                     android:id="@+id/rbAPrazo"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="À prazo (5% Acréscimo)"/>
+                    android:text="À prazo (5% Acrés)"/>
 
             </RadioGroup>
 

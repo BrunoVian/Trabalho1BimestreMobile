@@ -20,13 +20,13 @@ import br.unipar.trabalhobimestralmobile.model.Pedido;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Pedido> listaPedidos = new ArrayList<>();
-    Cliente nvCliente = new Cliente();
-    Pedido nvPedido = new Pedido();
+    private ArrayList<Pedido> listaPedidos = new ArrayList<Pedido>();
 
+    private ArrayList<Item> listaItens = new ArrayList<Item>();
     private double valorTotalPedido = 0;
 
     private int contItem = 1;
+    final int[] numPedido = {1};
 
     private EditText edCodPedido;
     private EditText edNomeCliente;
@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setVisible(true);
 
-        final int[] numPedido = {1};
-
         edCodPedido = findViewById(R.id.edCodPedido);
         edNomeCliente = findViewById(R.id.edNomeCliente);
         edCpfCliente = findViewById(R.id.edCpfCliente);
@@ -91,6 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
         edCodPedido.setText(String.valueOf(numPedido[0]));
 
+        Cliente testeCliente = new Cliente("Nome TEste", "CPF teste");
+        Pedido testePedido = new Pedido();
+        testePedido.setCod(100);
+        testePedido.setCliente(testeCliente);
+        listaPedidos.add(testePedido);
+
+        ArrayList<Item> listaTesteItens = new ArrayList<>();
+
+        Cliente testeCliente2 = new Cliente("Nome TEste2", "CPF teste2");
+        Pedido testePedido2 = new Pedido(200, testeCliente2, listaTesteItens);
+        testePedido2.setCod(200);
+        testePedido2.setCliente(testeCliente2);
+        listaPedidos.add(testePedido2);
+
         btAdicionarItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -104,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     incluirItem();
-
                 }catch (Exception ex){
                     Log.e("ERRO BTNINLCUIR", ex.getMessage());
                 }
@@ -115,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finalizaPedido();
-                numPedido[0] = numPedido[0] +1;
                 edCodPedido.setText(String.valueOf(numPedido[0]));
             }
         });
@@ -131,6 +141,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 calculaTotalAVista();
+            }
+        });
+
+        btBuscarPedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    buscaPedido();
+                    Log.i("TESTE", listaPedidos.get(2).toString());
+                }catch (Exception ex){
+                    Log.e("ERRO BTNBUSCA PEDIDO", ex.getMessage());
+                }
             }
         });
 
@@ -167,60 +189,51 @@ public class MainActivity extends AppCompatActivity {
     public void incluirItem(){
 
         String descricao = edDescItem.getText().toString();
+        String resultado = tvItens.getText().toString();
 
         try {
+            if(!descricao.equals("") && !edQntdItem.equals(null) && !edVlrUnitItem.equals(null)){
 
-            String resultado = tvItens.getText().toString();
+                int qntdItem = Integer.parseInt(edQntdItem.getText().toString());
+                Double vlrUnitarioItem = Double.valueOf(edVlrUnitItem.getText().toString());
 
-            if(!descricao.equals("") && !edQntdItem.equals(null) && !edVlrUnitItem.equals(null)){ //valida se campos não estão vazios
-
-                int qntdItem = Integer.parseInt(edQntdItem.getText().toString()); //recebe a quantidade
-                Double vlrUnitarioItem = Double.valueOf(edVlrUnitItem.getText().toString()); // recebe o valor unitario
-
-                Double vlrTotalItem = qntdItem * vlrUnitarioItem; //calcula o valor total para salvar no obj
-
+                Double vlrTotalItem = qntdItem * vlrUnitarioItem;
 
                 Item nvItem = new Item();
                 nvItem.setDescricao(descricao);
                 nvItem.setQuantidade(qntdItem);
                 nvItem.setVlrUnitario(vlrUnitarioItem);
                 nvItem.setVlrTotal(vlrTotalItem);
+                nvItem.setIdPedido(Integer.parseInt(edCodPedido.getText().toString()));
 
                 tvItens.setVisibility(View.VISIBLE);
 
-                //seta o resultado para exibir a lista
                 resultado += "Item " + contItem + " - Descrição: " + descricao.toString()
                         + " | Quantidade: " + String.valueOf(nvItem.getQuantidade()) + " | VlrUnitario: "
                         + nvItem.getVlrUnitario() + " | Valor Total do Item: " + nvItem.getVlrTotal() + "\n\n";
 
-                //exibe a lista
                 tvItens.setText(resultado);
 
-                //exibe a msg
                 Toast.makeText(this, "Incluído com Sucesso!", Toast.LENGTH_SHORT).show();
 
-                //adiciona mais 1 ao contador de itens da lista
                 contItem++;
 
-                //adiciona o item no pedido
-                nvPedido.getListaItens().add(nvItem);
+                listaItens.add(nvItem);
 
                 limpaCampos();
 
                 fecharListagem();
 
             }else{
-                if(descricao.equals("")){
+                if(descricao.equals("") || edDescItem.getText().toString() == null){
                     edDescItem.setError("Informe a Descrição do Item!");
                 }
-                if(edVlrUnitItem.getText().toString().equals("")){
+                if(edVlrUnitItem.getText().toString().equals("") || Integer.parseInt(edVlrUnitItem.getText().toString()) <=0 ){
                     edVlrUnitItem.setError("Valor Inválido!");
                 }
-                if(edQntdItem.getText().toString().equals("")){
+                if(edQntdItem.getText().toString().equals("") || Integer.parseInt(edQntdItem.getText().toString()) <=0 ){
                     edQntdItem.setError("Quantidade Inválida!");
                 }
-
-
             }
 
         }catch (Exception ex){
@@ -235,17 +248,21 @@ public class MainActivity extends AppCompatActivity {
 
         try {
 
-            if(!nvPedido.getListaItens().isEmpty()) {
+            if(!listaItens.isEmpty()) {
 
-                for (int i = 0; i < nvPedido.getListaItens().size(); i++) {
-                    valorTotalPedido = valorTotalPedido + nvPedido.getListaItens().get(i).getVlrTotal();
+                for (int i = 0; i < listaItens.size(); i++) {
+                    if(listaItens.get(i).getIdPedido() == Integer.parseInt(edCodPedido.getText().toString())){
+                        valorTotalPedido = valorTotalPedido + listaItens.get(i).getVlrTotal();
+                    }
                 }
 
-                    exibValorTotalPedido = valorTotalPedido + (valorTotalPedido * 0.05);
-                    valorTotalPedido = 0;
-                    edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
-                    nvPedido.setVlrTotalPedido(exibValorTotalPedido);
+                exibValorTotalPedido = valorTotalPedido + (valorTotalPedido * 0.05);
 
+                valorTotalPedido = 0;
+                edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
+
+
+                //nvPedido.setVlrTotalPedido(exibValorTotalPedido);
 
                 tvParcelas.setVisibility(View.VISIBLE);
                 tvInfoParcelas.setVisibility(View.VISIBLE);
@@ -266,7 +283,9 @@ public class MainActivity extends AppCompatActivity {
                             vlrParcelas = exibValorTotalPedido/qntParcelas;
 
                             tvParcelas.setText("Parcelado em " + qntParcelas + " parcelas de " + vlrParcelas + "\n\n" );
-                            nvPedido.setParcelas(tvParcelas.getText().toString());
+
+                            //nvPedido.setParcelas(tvParcelas.getText().toString());
+                            //nvPedido.setFormaPgt("A Prazo");
 
                         }
                     }
@@ -293,16 +312,17 @@ public class MainActivity extends AppCompatActivity {
 
         try {
 
-            if(!nvPedido.getListaItens().isEmpty()) {
+            if(!listaItens.isEmpty()) {
 
-                for (int i = 0; i < nvPedido.getListaItens().size(); i++) {
-                    valorTotalPedido = valorTotalPedido + nvPedido.getListaItens().get(i).getVlrTotal();
+                for (int i = 0; i < listaItens.size(); i++) {
+                    if(listaItens.get(i).getIdPedido() == Integer.parseInt(edCodPedido.getText().toString())) {
+                        valorTotalPedido = valorTotalPedido + listaItens.get(i).getVlrTotal();
+                    }
                 }
                     exibValorTotalPedido = valorTotalPedido - (valorTotalPedido * 0.05);
                     valorTotalPedido = 0;
 
                     edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
-                    nvPedido.setVlrTotalPedido(exibValorTotalPedido);
 
             } else{
                 Toast.makeText(this, "Não há itens na lista", Toast.LENGTH_SHORT).show();
@@ -316,6 +336,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void limpaPedido(){
+
         edQntParcelas.setText(null);
         edQntdItem.setText(null);
         edVlrTotalPedido.setText(null);
@@ -332,28 +353,100 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void finalizaPedido(){
+    public void finalizaPedido() {
 
-        nvCliente.setNome(edNomeCliente.getText().toString());
-        nvCliente.setCpf(edCpfCliente.getText().toString());
+        int codPedido = Integer.parseInt(edCodPedido.getText().toString());
+        String nome = edNomeCliente.getText().toString();
+        String cpf = edCpfCliente.getText().toString();
+        String parcelas = tvParcelas.getText().toString();
+        String formaPgt = "";
 
-        nvPedido.setCod(contItem);
-        nvPedido.setCliente(nvCliente);
-        nvPedido.setCod(contItem);
+        if(rbAVista.isChecked()){
+            formaPgt = "À Vista";
+        } else if (rbAPrazo.isChecked()){
+            formaPgt = "A Prazo";
+        }
 
-        listaPedidos.add(nvPedido);
+        if (!nome.equals("") && !cpf.equals("") && !formaPgt.equals("") && !edVlrTotalPedido.getText().toString().equals("") && !listaItens.isEmpty()) {
 
-        nvCliente.setCpf(null);
-        nvCliente.setNome(null);
+            Cliente cliente = new Cliente(nome, cpf);
+            Pedido pedido = new Pedido(codPedido, cliente, listaItens, formaPgt, Double.parseDouble(edVlrTotalPedido.getText().toString()), parcelas);
+            listaPedidos.add(pedido);
 
-        nvPedido.setCod(0);
-        nvPedido.setCliente(null);
-        nvPedido.setListaItens(null);
-        nvPedido.setParcelas(null);
-        nvPedido.setVlrTotalPedido(null);
+            Toast.makeText(this, "Pedido n° " + edCodPedido.getText().toString() + " cadastrado com sucesso!", Toast.LENGTH_LONG).show();
 
-        limpaPedido();
+            numPedido[0] = numPedido[0] + 1;
+            contItem = 1;
+            limpaPedido();
 
+        } else {
+            if (nome.equals("")) {
+                edNomeCliente.setError("Informe o Nome!");
+            }
+            if (cpf.equals("")) {
+                edCpfCliente.setError("Informe o CPF!");
+            }
+            if (rbAPrazo.isChecked() == false && rbAVista.isChecked() == false) {
+                Toast.makeText(this, "Informe uma forma de pagamento!", Toast.LENGTH_LONG).show();
+            }
+            if (listaItens.size() == 0) {
+                Toast.makeText(this, "Não há pedidos na lista!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
-}
+    public void buscaPedido(){
+
+        int numPedidoBusca = Integer.parseInt(edCodPedido.getText().toString());
+        String resultado = "Itens: ";
+        boolean existePedido = false;
+        int i = 0;
+
+        for(int posicao = 0; posicao<listaPedidos.size();posicao++){
+            if(numPedidoBusca == listaPedidos.get(posicao).getCod()) {
+                existePedido = true;
+                i = posicao;
+                break;
+            }
+        }
+
+        if(numPedidoBusca >= 1 && existePedido == true) {
+
+                if (listaPedidos.get(i).getCod() == Integer.parseInt(edCodPedido.getText().toString())) {
+
+                    edNomeCliente.setText(listaPedidos.get(i).getCliente().getNome());
+                    edCpfCliente.setText(listaPedidos.get(i).getCliente().getCpf());
+
+                    for (int j = 0; j < listaPedidos.get(i).getListaItens().size(); j++) {
+                        if(listaItens.get(j).getIdPedido() == Integer.parseInt(edCodPedido.getText().toString())) {
+                            resultado += "Descrição: " + listaPedidos.get(i).getListaItens().get(j).getDescricao()
+                                    + " | Quantidade: " + String.valueOf(listaPedidos.get(i).getListaItens().get(j).getQuantidade()) + " | VlrUnitario: "
+                                    + listaPedidos.get(i).getListaItens().get(j).getVlrUnitario() + " | Valor Total do Item: "
+                                    + listaPedidos.get(i).getListaItens().get(j).getVlrTotal() + "\n\n";
+                        }
+                    }
+                    tvItens.setText(resultado);
+
+                    if(listaPedidos.get(i).getFormaPgt() == "À Vista"){
+                        rbAVista.setChecked(true);
+                        edVlrTotalPedido.setText(String.valueOf(listaPedidos.get(i).getVlrTotalPedido()));
+                        tvInfoParcelas.setVisibility(View.GONE);
+                    }
+
+                    if(listaPedidos.get(i).getFormaPgt() == "A Prazo"){
+                        rbAPrazo.setChecked(true);
+                        edVlrTotalPedido.setText(String.valueOf(listaPedidos.get(i).getVlrTotalPedido()));
+                        tvInfoParcelas.setVisibility(View.VISIBLE);
+                        tvInfoParcelas.setText(String.valueOf(listaPedidos.get(i).getParcelas()));
+                    }
+
+            }
+
+            } else if(numPedidoBusca < 1){
+                Toast.makeText(this, "Informe um valor maior que zero", Toast.LENGTH_SHORT).show();
+            } else if(existePedido == false){
+                Toast.makeText(this, "O pedido " + numPedidoBusca + " não existe", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+

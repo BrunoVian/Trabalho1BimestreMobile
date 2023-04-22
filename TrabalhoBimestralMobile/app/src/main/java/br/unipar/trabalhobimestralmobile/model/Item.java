@@ -5,6 +5,7 @@ public class Item {
     private int quantidade;
     private Double vlrUnitario;
     private Double vlrTotal;
+    private int idPedido;
 
     public Item() {
     }
@@ -13,6 +14,22 @@ public class Item {
         this.descricao = descricao;
         this.quantidade = quantidade;
         this.vlrUnitario = vlrUnitario;
+    }
+
+    public Item(String descricao, int quantidade, Double vlrUnitario, Double vlrTotal, int idPedido) {
+        this.descricao = descricao;
+        this.quantidade = quantidade;
+        this.vlrUnitario = vlrUnitario;
+        this.vlrTotal = vlrTotal;
+        this.idPedido = idPedido;
+    }
+
+    public int getIdPedido() {
+        return idPedido;
+    }
+
+    public void setIdPedido(int idPedido) {
+        this.idPedido = idPedido;
     }
 
     public String getDescricao() {

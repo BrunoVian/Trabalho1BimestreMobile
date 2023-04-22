@@ -5,11 +5,29 @@ import java.util.ArrayList;
 public class Pedido {
     private int cod;
     private Cliente cliente;
-    private ArrayList<Item> listaItens = new ArrayList<>();
-    private FormaPgt formaPgtEnum;
+    private ArrayList<Item> listaItens = new ArrayList<Item>();
+    private String formaPgt;
     private Double vlrTotalPedido;
-
     private String parcelas;
+
+    public Pedido() {
+
+    }
+
+    public Pedido(int cod, Cliente cliente, ArrayList<Item> listaItens) {
+        this.cod = cod;
+        this.cliente = cliente;
+        this.listaItens = listaItens;
+    }
+
+    public Pedido(int cod, Cliente cliente, ArrayList<Item> listaItens, String formaPgt, Double vlrTotalPedido, String parcelas) {
+        this.cod = cod;
+        this.cliente = cliente;
+        this.listaItens = listaItens;
+        this.formaPgt = formaPgt;
+        this.vlrTotalPedido = vlrTotalPedido;
+        this.parcelas = parcelas;
+    }
 
     public int getCod() {
         return cod;
@@ -35,14 +53,21 @@ public class Pedido {
         this.listaItens = listaItens;
     }
 
-    public FormaPgt getFormaPgtEnum() {
-        return formaPgtEnum;
+    public String getFormaPgt() {
+        return formaPgt;
     }
 
-    public void setFormaPgtEnum(FormaPgt formaPgtEnum) {
-        this.formaPgtEnum = formaPgtEnum;
+    public void setFormaPgt(String formaPgt) {
+        this.formaPgt = formaPgt;
     }
 
+    public Double getVlrTotalPedido() {
+        return vlrTotalPedido;
+    }
+
+    public void setVlrTotalPedido(Double vlrTotalPedido) {
+        this.vlrTotalPedido = vlrTotalPedido;
+    }
 
     public String getParcelas() {
         return parcelas;
@@ -52,11 +77,15 @@ public class Pedido {
         this.parcelas = parcelas;
     }
 
-    public Double getVlrTotalPedido() {
-        return vlrTotalPedido;
-    }
-
-    public void setVlrTotalPedido(Double vlrTotalPedido) {
-        this.vlrTotalPedido = vlrTotalPedido;
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "cod=" + cod +
+                ", cliente=" + cliente +
+                ", listaItens=" + listaItens +
+                ", formaPgt='" + formaPgt + '\'' +
+                ", vlrTotalPedido=" + vlrTotalPedido +
+                ", parcelas='" + parcelas + '\'' +
+                '}';
     }
 }

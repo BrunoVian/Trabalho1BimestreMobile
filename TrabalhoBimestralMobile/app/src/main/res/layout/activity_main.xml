@@ -38,11 +38,11 @@
 
                 <EditText
                     android:id="@+id/edCodPedido"
-                    android:layout_width="162dp"
+                    android:layout_width="136dp"
                     android:layout_height="wrap_content" />
 
                 <Button
-                    android:id="@+id/btnBuscarPedido"
+                    android:id="@+id/btBuscarPedido"
                     android:layout_width="106dp"
                     android:backgroundTint="@color/cinza"
                     android:textColor="@color/white"
@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content" />
 
             <!--Itens-->
+
 
             <Button
                 android:id="@+id/btAdcItem"
@@ -145,7 +146,6 @@
                 android:visibility="gone"/>
 
         <!--Pagamento-->
-
 <!--            <TextView-->
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="wrap_content"-->
@@ -154,6 +154,15 @@
 <!--                android:text="Pagamento"-->
 <!--                android:textSize="20dp"-->
 <!--                android:textStyle="bold" />-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dados de Pagamento"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_margin="10dp"/>
 
             <TextView
                 android:id="@+id/tvFormaPagamento"
@@ -171,22 +180,16 @@
                     android:id="@+id/rbAVista"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="A vista"/>
+                    android:text="A vista (5% desconto)"/>
 
                 <RadioButton
                     android:id="@+id/rbAPrazo"
+                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="À prazo"/>
+                    android:text="À prazo (5% Acréscimo)"/>
 
             </RadioGroup>
-
-            <TextView
-                android:id="@+id/tvParcelas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Informe a quantidade de parcelas"
-                android:visibility="gone"/>
 
             <EditText
                 android:id="@+id/edParcelas"
@@ -215,10 +218,42 @@
                 android:visibility="visible" />
 
             <TextView
+                android:id="@+id/tvInfoParcelas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Informe a quantidade de parcelas"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <EditText
+                    android:id="@+id/edQntParcelas"
+                    android:layout_width="156dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btGerarParcelas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:backgroundTint="@color/cinza"
+                    android:visibility="gone"
+                    android:text="Gerar"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <TextView
                 android:id="@+id/tvParcelas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="gone"
                 />
 
             <Button

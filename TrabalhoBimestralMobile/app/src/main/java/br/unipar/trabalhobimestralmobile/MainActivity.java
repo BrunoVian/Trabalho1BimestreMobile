@@ -12,13 +12,21 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import br.unipar.trabalhobimestralmobile.model.Cliente;
 import br.unipar.trabalhobimestralmobile.model.Item;
 import br.unipar.trabalhobimestralmobile.model.Pedido;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int contItem = 1;
+    private ArrayList<Pedido> listaPedidos = new ArrayList<>();
+    Cliente nvCliente = new Cliente();
     Pedido nvPedido = new Pedido();
+
+    private double valorTotalPedido = 0;
+
+    private int contItem = 1;
 
     private EditText edCodPedido;
     private EditText edNomeCliente;
@@ -27,14 +35,21 @@ public class MainActivity extends AppCompatActivity {
     private EditText edQntdItem;
     private EditText edVlrUnitItem;
     private EditText edVlrTotalPedido;
+    private EditText edQntParcelas;
 
     private TextView tvDescItem;
     private TextView tvQntdItem;
     private TextView tvVlrUnitItem;
     private TextView tvItens;
+    private TextView tvParcelas;
+
+    private TextView tvInfoParcelas;
 
     private Button btAdicionarItem;
     private Button btIncluirItem;
+    private Button btBuscarPedido;
+    private Button btGerarParcelas;
+    private Button btConcluirPedido;
 
     private RadioButton rbAVista;
     private RadioButton rbAPrazo;
@@ -56,14 +71,20 @@ public class MainActivity extends AppCompatActivity {
         edQntdItem = findViewById(R.id.edQntdItem);
         edVlrUnitItem = findViewById(R.id.edVlrUnitItem);
         edVlrTotalPedido = findViewById(R.id.edVlrTotalPedido);
+        edQntParcelas = findViewById(R.id.edQntParcelas);
 
         btAdicionarItem = findViewById(R.id.btAdcItem);
         btIncluirItem = findViewById(R.id.btIncuirItem);
+        btBuscarPedido = findViewById(R.id.btBuscarPedido);
+        btGerarParcelas = findViewById(R.id.btGerarParcelas);
+        btConcluirPedido = findViewById(R.id.btConcluirPedido);
 
         tvDescItem = findViewById(R.id.tvDescItem);
         tvQntdItem = findViewById(R.id.tvQntdItem);
         tvVlrUnitItem = findViewById(R.id.tvVlrUnitItem);
         tvItens = findViewById(R.id.tvItens);
+        tvParcelas = findViewById(R.id.tvParcelas);
+        tvInfoParcelas = findViewById(R.id.tvInfoParcelas);
 
         rbAPrazo = findViewById(R.id.rbAPrazo);
         rbAVista = findViewById(R.id.rbAVista);
@@ -83,20 +104,26 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     incluirItem();
-                    numPedido[0] = numPedido[0] +1;
-                    //edCodPedido.setText(String.valueOf(numPedido[0]));
+
                 }catch (Exception ex){
                     Log.e("ERRO BTNINLCUIR", ex.getMessage());
                 }
             }
         });
 
+        btConcluirPedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finalizaPedido();
+                numPedido[0] = numPedido[0] +1;
+                edCodPedido.setText(String.valueOf(numPedido[0]));
+            }
+        });
+
         rbAPrazo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
+                calculaTotalAPrazo();
             }
         });
 
@@ -131,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
         btIncluirItem.setVisibility(View.GONE);
     }
 
+    public void limpaCampos(){
+        edDescItem.setText(null);
+        edQntdItem.setText(null);
+        edVlrUnitItem.setText(null);
+    }
+
     public void incluirItem(){
 
         String descricao = edDescItem.getText().toString();
@@ -146,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Double vlrTotalItem = qntdItem * vlrUnitarioItem; //calcula o valor total para salvar no obj
 
-                //cria o obj
+
                 Item nvItem = new Item();
                 nvItem.setDescricao(descricao);
                 nvItem.setQuantidade(qntdItem);
@@ -172,9 +205,10 @@ public class MainActivity extends AppCompatActivity {
                 //adiciona o item no pedido
                 nvPedido.getListaItens().add(nvItem);
 
+                limpaCampos();
+
                 fecharListagem();
 
-            //exibe erro se algum campo estiver vazio
             }else{
                 if(descricao.equals("")){
                     edDescItem.setError("Informe a Descrição do Item!");
@@ -197,18 +231,46 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculaTotalAPrazo(){
 
+        Double exibValorTotalPedido;
+
         try {
 
             if(!nvPedido.getListaItens().isEmpty()) {
 
-                double valorTotalPedido = 0;
-
                 for (int i = 0; i < nvPedido.getListaItens().size(); i++) {
                     valorTotalPedido = valorTotalPedido + nvPedido.getListaItens().get(i).getVlrTotal();
-                    edVlrTotalPedido.setText(String.valueOf(valorTotalPedido));
                 }
 
+                    exibValorTotalPedido = valorTotalPedido + (valorTotalPedido * 0.05);
+                    valorTotalPedido = 0;
+                    edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
+                    nvPedido.setVlrTotalPedido(exibValorTotalPedido);
 
+
+                tvParcelas.setVisibility(View.VISIBLE);
+                tvInfoParcelas.setVisibility(View.VISIBLE);
+                edQntParcelas.setVisibility(View.VISIBLE);
+                btGerarParcelas.setVisibility(View.VISIBLE);
+
+                btGerarParcelas.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int qntParcelas = 0;
+                        Double vlrParcelas;
+                        String parcelas;
+
+                        if(!edQntParcelas.getText().toString().equals("")){
+
+                            qntParcelas = Integer.parseInt(edQntParcelas.getText().toString());
+
+                            vlrParcelas = exibValorTotalPedido/qntParcelas;
+
+                            tvParcelas.setText("Parcelado em " + qntParcelas + " parcelas de " + vlrParcelas + "\n\n" );
+                            nvPedido.setParcelas(tvParcelas.getText().toString());
+
+                        }
+                    }
+                });
 
             } else{
                 Toast.makeText(this, "Não há itens na lista", Toast.LENGTH_SHORT).show();
@@ -223,15 +285,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculaTotalAVista(){
 
+        Double exibValorTotalPedido;
+
+        tvInfoParcelas.setVisibility(View.GONE);
+        edQntParcelas.setVisibility(View.GONE);
+        btGerarParcelas.setVisibility(View.GONE);
+
         try {
 
             if(!nvPedido.getListaItens().isEmpty()) {
-                double valorTotalPedido = 0;
 
                 for (int i = 0; i < nvPedido.getListaItens().size(); i++) {
                     valorTotalPedido = valorTotalPedido + nvPedido.getListaItens().get(i).getVlrTotal();
-                    edVlrTotalPedido.setText(String.valueOf(valorTotalPedido));
                 }
+                    exibValorTotalPedido = valorTotalPedido - (valorTotalPedido * 0.05);
+                    valorTotalPedido = 0;
+
+                    edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
+                    nvPedido.setVlrTotalPedido(exibValorTotalPedido);
 
             } else{
                 Toast.makeText(this, "Não há itens na lista", Toast.LENGTH_SHORT).show();
@@ -241,6 +312,47 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception ex){
             Log.e("ERRO CALCULA TOTAL A VISTA", ex.getMessage());
         }
+
+    }
+
+    public void limpaPedido(){
+        edQntParcelas.setText(null);
+        edQntdItem.setText(null);
+        edVlrTotalPedido.setText(null);
+        edDescItem.setText(null);
+        edCpfCliente.setText(null);
+        edNomeCliente.setText(null);
+
+        tvParcelas.setText(null);
+        tvItens.setText(null);
+
+        tvInfoParcelas.setVisibility(View.GONE);
+        edQntParcelas.setVisibility(View.GONE);
+        btGerarParcelas.setVisibility(View.GONE);
+
+    }
+
+    public void finalizaPedido(){
+
+        nvCliente.setNome(edNomeCliente.getText().toString());
+        nvCliente.setCpf(edCpfCliente.getText().toString());
+
+        nvPedido.setCod(contItem);
+        nvPedido.setCliente(nvCliente);
+        nvPedido.setCod(contItem);
+
+        listaPedidos.add(nvPedido);
+
+        nvCliente.setCpf(null);
+        nvCliente.setNome(null);
+
+        nvPedido.setCod(0);
+        nvPedido.setCliente(null);
+        nvPedido.setListaItens(null);
+        nvPedido.setParcelas(null);
+        nvPedido.setVlrTotalPedido(null);
+
+        limpaPedido();
 
     }
 

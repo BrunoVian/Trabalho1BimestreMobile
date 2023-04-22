@@ -7,9 +7,9 @@ public class Pedido {
     private Cliente cliente;
     private ArrayList<Item> listaItens = new ArrayList<>();
     private FormaPgt formaPgtEnum;
-    private int desconto;
-    private int acrescimo;
     private Double vlrTotalPedido;
+
+    private String parcelas;
 
     public int getCod() {
         return cod;
@@ -43,20 +43,13 @@ public class Pedido {
         this.formaPgtEnum = formaPgtEnum;
     }
 
-    public int getDesconto() {
-        return desconto;
+
+    public String getParcelas() {
+        return parcelas;
     }
 
-    public void setDesconto(int desconto) {
-        this.desconto = desconto;
-    }
-
-    public int getAcrescimo() {
-        return acrescimo;
-    }
-
-    public void setAcrescimo(int acrescimo) {
-        this.acrescimo = acrescimo;
+    public void setParcelas(String parcelas) {
+        this.parcelas = parcelas;
     }
 
     public Double getVlrTotalPedido() {

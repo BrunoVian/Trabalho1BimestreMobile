@@ -89,20 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
         edCodPedido.setText(String.valueOf(numPedido[0]));
 
-        Cliente testeCliente = new Cliente("Nome TEste", "CPF teste");
-        Pedido testePedido = new Pedido();
-        testePedido.setCod(100);
-        testePedido.setCliente(testeCliente);
-        listaPedidos.add(testePedido);
-
-        ArrayList<Item> listaTesteItens = new ArrayList<>();
-
-        Cliente testeCliente2 = new Cliente("Nome TEste2", "CPF teste2");
-        Pedido testePedido2 = new Pedido(200, testeCliente2, listaTesteItens);
-        testePedido2.setCod(200);
-        testePedido2.setCliente(testeCliente2);
-        listaPedidos.add(testePedido2);
-
         btAdicionarItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -209,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
                 tvItens.setVisibility(View.VISIBLE);
 
                 resultado += "Item " + contItem + " - Descrição: " + descricao.toString()
-                        + " | Quantidade: " + String.valueOf(nvItem.getQuantidade()) + " | VlrUnitario: "
-                        + nvItem.getVlrUnitario() + " | Valor Total do Item: " + nvItem.getVlrTotal() + "\n\n";
+                        + " | Quantidade: " + String.valueOf(nvItem.getQuantidade()) + " | VlrUnitario: R$ "
+                        + String.format("%.2f", nvItem.getVlrUnitario()) + " | Valor Total do Item: R$ " + String.format("%.2f", nvItem.getVlrTotal()) + "\n\n";
 
                 tvItens.setText(resultado);
 
@@ -261,9 +247,6 @@ public class MainActivity extends AppCompatActivity {
                 valorTotalPedido = 0;
                 edVlrTotalPedido.setText(String.valueOf(exibValorTotalPedido));
 
-
-                //nvPedido.setVlrTotalPedido(exibValorTotalPedido);
-
                 tvParcelas.setVisibility(View.VISIBLE);
                 tvInfoParcelas.setVisibility(View.VISIBLE);
                 edQntParcelas.setVisibility(View.VISIBLE);
@@ -274,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         int qntParcelas = 0;
                         Double vlrParcelas;
-                        String parcelas;
+                        String parcelas = "";
 
                         if(!edQntParcelas.getText().toString().equals("")){
 
@@ -282,11 +265,10 @@ public class MainActivity extends AppCompatActivity {
 
                             vlrParcelas = exibValorTotalPedido/qntParcelas;
 
-                            tvParcelas.setText("Parcelado em " + qntParcelas + " parcelas de " + vlrParcelas + "\n\n" );
-
-                            //nvPedido.setParcelas(tvParcelas.getText().toString());
-                            //nvPedido.setFormaPgt("A Prazo");
-
+                            for(int i = 0; i<qntParcelas;i++){
+                                parcelas += "Parcela " + (i + 1) + " - R$ " + String.format("%.2f", vlrParcelas) + "\n";
+                            }
+                            tvParcelas.setText(parcelas);
                         }
                     }
                 });
@@ -297,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }catch (Exception ex){
-            Log.e("ERRO CALCULA TOTAL A PRAZO", ex.getMessage());
+            Log.e("ERRO CALCULAR TOTAL A PRAZO", ex.getMessage());
         }
 
     }
@@ -346,6 +328,9 @@ public class MainActivity extends AppCompatActivity {
 
         tvParcelas.setText(null);
         tvItens.setText(null);
+
+        rbAPrazo.setChecked(false);
+        rbAVista.setChecked(false);
 
         tvInfoParcelas.setVisibility(View.GONE);
         edQntParcelas.setVisibility(View.GONE);
@@ -398,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
     public void buscaPedido(){
 
         int numPedidoBusca = Integer.parseInt(edCodPedido.getText().toString());
-        String resultado = "Itens: ";
+        String resultado = "";
         boolean existePedido = false;
         int i = 0;
 
@@ -420,9 +405,9 @@ public class MainActivity extends AppCompatActivity {
                     for (int j = 0; j < listaPedidos.get(i).getListaItens().size(); j++) {
                         if(listaItens.get(j).getIdPedido() == Integer.parseInt(edCodPedido.getText().toString())) {
                             resultado += "Descrição: " + listaPedidos.get(i).getListaItens().get(j).getDescricao()
-                                    + " | Quantidade: " + String.valueOf(listaPedidos.get(i).getListaItens().get(j).getQuantidade()) + " | VlrUnitario: "
-                                    + listaPedidos.get(i).getListaItens().get(j).getVlrUnitario() + " | Valor Total do Item: "
-                                    + listaPedidos.get(i).getListaItens().get(j).getVlrTotal() + "\n\n";
+                                    + " | Quantidade: " + String.valueOf(listaPedidos.get(i).getListaItens().get(j).getQuantidade()) + " | VlrUnitario: R$ "
+                                    + String.format("%.2f", listaPedidos.get(i).getListaItens().get(j).getVlrUnitario()) + " | Valor Total do Item: R$ "
+                                    + String.format("%.2f", listaPedidos.get(i).getListaItens().get(j).getVlrTotal()) + "\n\n";
                         }
                     }
                     tvItens.setText(resultado);
